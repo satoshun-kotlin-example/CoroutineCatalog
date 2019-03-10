@@ -1,2 +1,4 @@
 package sample
 
+fun zip() {
+}
