@@ -1,109 +1,57 @@
 package sample
 
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import java.io.IOException
-import kotlin.system.measureTimeMillis
 
 class ZipTest {
-  @Test
-  fun zip() {
-    val time = measureTimeMillis {
-      runBlocking {
-        sample1()
-        sample2()
-      }
-    }
-    println(time)
-  }
+  private val scope get() = GlobalScope
 
   @Test
-  fun zip1() {
-    val time = measureTimeMillis {
-      runBlocking {
-        val p1 = async {
-          sample1()
-          println("finish1")
-        }
-        val p2 = async {
-          sample2()
-          println("finish2")
-        }
-        val p3 = async {
-          val result = runCatching { sample3() }
-          println("finish3")
-          result
-        }
-        awaitAll(p1, p2, p3)
-      }
-    }
-    println(time)
-  }
+  fun serialZip() {
+    val p1 = scope.launch {
+      val r1 = fastTask()
+      val r2 = slowTask()
+      val r3 = errorTask()
 
-  @Test
-  fun zip2() {
-    val time = measureTimeMillis {
-      runBlocking {
-        val p1 = async {
-          sample1()
-          println("finish1")
-        }
-        val p2 = async {
-          sample2()
-          println("finish2")
-        }
-        val p3 = async {
-          val result = runCatching { sample3() }
-          println("finish3")
-          result
-        }
-        println(p1.await())
-        println(p2.await())
-        println(p3.await())
-      }
+      println("p1 unreachable")
     }
-    println(time)
-  }
 
-  @Test
-  fun zip3() {
-    val time = measureTimeMillis {
-      runBlocking {
-        val p1 = async {
-          sample1()
-          println("finish1")
-        }
-        val p2 = async {
-          sample2()
-          println("finish2")
-        }
-        val p3 = async {
-          sample3()
-          println("finish3")
-        }
-        p1.await()
-        p2.await()
-        p3.await()
-      }
+    // wrap with Result type
+    val p2 = scope.launch {
+      val r1 = runCatching { fastTask() }
+      val r2 = runCatching { slowTask() }
+      val r3 = runCatching { errorTask() }
+
+      println("p2 reachable")
     }
-    println(time)
+
+    runBlocking {
+      p1.join()
+      p2.join()
+
+      println("runBlocking reachable")
+    }
   }
 }
 
-private suspend fun sample1(): String {
-  delay(32)
-  return "sample1"
+private suspend fun fastTask(): String {
+  delay(5)
+  return "finish fastTask"
 }
 
-private suspend fun sample2(): String {
-  delay(20)
-  return "sample2"
+private suspend fun slowTask(): String {
+  delay(1000)
+  return "finish slowTask"
 }
 
-private suspend fun sample3(): String {
+private suspend fun errorTask(): String {
   delay(25)
-  throw IOException("error sample3")
+  if (true) {
+    throw IOException("error sample3")
+  }
+  return "unreachable"
 }
