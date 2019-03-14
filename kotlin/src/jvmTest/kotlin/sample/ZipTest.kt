@@ -1,6 +1,7 @@
 package sample
 
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -15,7 +16,7 @@ class ZipTest {
     val p1 = scope.launch {
       val r1 = fastTask()
       val r2 = slowTask()
-      val r3 = errorTask()
+      val r3 = errorTask() // this job fail and finish
 
       println("p1 unreachable")
     }
@@ -36,6 +37,27 @@ class ZipTest {
       println("runBlocking reachable")
     }
   }
+
+  @Test
+  fun parallelZip() {
+    val p1 = scope.launch {
+      val r1 = async { fastTask() }
+      val r2 = async { slowTask() }
+      val r3 = async { errorTask() }
+
+      println("r1: ${r1.await()}")
+      println("r2: ${r2.await()}") // no reachable
+      println("r3: ${r3.await()}")
+
+      println("p1 unreachable")
+    }
+
+    runBlocking {
+      p1.join()
+
+      println("runBlocking reachable")
+    }
+  }
 }
 
 private suspend fun fastTask(): String {
@@ -51,7 +73,7 @@ private suspend fun slowTask(): String {
 private suspend fun errorTask(): String {
   delay(25)
   if (true) {
-    throw IOException("error sample3")
+    throw IOException("errorTask")
   }
   return "unreachable"
 }
