@@ -1,16 +1,12 @@
 package com.github.satoshun.example.coroutine
 
 import android.os.Bundle
+import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
   private lateinit var viewModel: MainViewModel
@@ -18,41 +14,26 @@ class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
+    viewModel = ViewModelProviders.of(this).get()
 
     viewModel.userName.observe(this, Observer {
+      Toast
+        .makeText(this@MainActivity, it!!, Toast.LENGTH_LONG)
+        .show()
     })
-
-    viewModel = ViewModelProviders.of(this).get()
-    viewModel.doSomething()
-  }
-}
-
-class MainViewModel : ViewModel() {
-  val userName = MutableLiveData<String>()
-
-  fun doSomething() {
-    viewModelScope.launch {
-      val prefix = MainService.fastTask()
-      val suffix = MainService.slowTask()
-
-      userName.postValue("$prefix $suffix")
+    val button: Button = findViewById(R.id.hello)
+    button.setOnClickListener {
+      viewModel.serialTask()
     }
-  }
-}
 
-object MainService {
-  suspend fun fastTask(): String {
-    delay(10)
-    return "finished fastTask"
-  }
+    val button2: Button = findViewById(R.id.hello2)
+    button2.setOnClickListener {
+      viewModel.serialTaskWithError()
+    }
 
-  suspend fun slowTask(): String {
-    delay(1000)
-    return "finished slowTask"
-  }
-
-  suspend fun errorTask(): String {
-    delay(30)
-    throw IOException("errorTask")
+    val button3: Button = findViewById(R.id.hello3)
+    button3.setOnClickListener {
+      viewModel.serialTaskWithError2()
+    }
   }
 }
