@@ -33,7 +33,17 @@ class MainActivity : AppCompatActivity() {
 
     val button3: Button = findViewById(R.id.hello3)
     button3.setOnClickListener {
-      viewModel.serialTaskWithError2()
+      viewModel.parallelTask()
+    }
+
+    val button4: Button = findViewById(R.id.hello4)
+    button4.setOnClickListener {
+      viewModel.parallelTaskWithError()
+    }
+
+    val button5: Button = findViewById(R.id.hello5)
+    button5.setOnClickListener {
+      viewModel.parallelTaskWithError2()
     }
   }
 }

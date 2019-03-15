@@ -39,8 +39,32 @@
     android:layout_marginStart="12dp"
     android:layout_marginEnd="12dp"
     android:gravity="center"
-    android:text="Serial Task with error2"
+    android:text="Parallel Task"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toRightOf="parent"
     app:layout_constraintTop_toBottomOf="@id/hello2" />
+
+  <Button
+    android:id="@+id/hello4"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:gravity="center"
+    android:text="Parallel Task With Error"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/hello3" />
+
+  <Button
+    android:id="@+id/hello5"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:gravity="center"
+    android:text="Parallel Task With Error2"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/hello4" />
 </androidx.constraintlayout.widget.ConstraintLayout>
