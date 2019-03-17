@@ -45,5 +45,10 @@ class MainActivity : AppCompatActivity() {
     button5.setOnClickListener {
       viewModel.parallelTaskWithError2()
     }
+
+    val button6: Button = findViewById(R.id.hello6)
+    button6.setOnClickListener {
+      viewModel.parallelTaskWithCancellation()
+    }
   }
 }

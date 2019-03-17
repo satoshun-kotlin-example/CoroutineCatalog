@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 
@@ -68,6 +69,31 @@ class MainViewModel : ViewModel() {
         val prefixTask = async { MainService.fastTask() }
         val suffixTask = async { MainService.slowTask() }
         val errorTask = async { MainService.errorTask() }
+
+        val prefix = runCatching { prefixTask.await() }
+        val suffix = runCatching { suffixTask.await() }
+        val error = runCatching { errorTask.await() }
+        userName.postValue(
+          "$prefix\n" +
+            "$suffix\n" +
+            "$error\n" +
+            "${System.currentTimeMillis() - start}"
+        )
+      }
+    }
+  }
+
+  fun parallelTaskWithCancellation() {
+    viewModelScope.launch {
+      supervisorScope {
+        val start = System.currentTimeMillis()
+
+        val prefixTask = async { MainService.fastTask() }
+        val suffixTask = async { MainService.slowTask() }
+        val errorTask = async { MainService.errorTask() }
+
+        delay(50)
+        suffixTask.cancel()
 
         val prefix = runCatching { prefixTask.await() }
         val suffix = runCatching { suffixTask.await() }
