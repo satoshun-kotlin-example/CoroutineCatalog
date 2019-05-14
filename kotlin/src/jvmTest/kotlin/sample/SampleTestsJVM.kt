@@ -1,6 +1,8 @@
 package sample
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import java.util.concurrent.CompletableFuture
@@ -23,7 +25,9 @@ class SampleTestsJVM {
     }.whenComplete { t, u ->
     }
   }
+}
 
+class AdvancedTest {
   @Test
   fun advanced1() {
     runBlockingTest {
@@ -40,6 +44,36 @@ class SampleTestsJVM {
 }
 
 suspend fun tooLongTask(): String {
-  delay(10_000)
+  delay(5_000)
   return "finished!!"
+}
+
+class LaunchTest {
+  @Test
+  fun launch1() {
+    runBlockingTest {
+      println("start runBlockingTest")
+      foo()
+      println("finish runBlockingTest")
+    }
+  }
+
+  @Test
+  fun launch2() {
+    runBlocking {
+      println("start runBlockingTest")
+      foo()
+      println("finish runBlockingTest")
+    }
+  }
+}
+
+fun CoroutineScope.foo() {
+  println("start method")
+  launch {
+    println("start launch block")
+    tooLongTask()
+    println("finish launch block")
+  }
+  println("finish method")
 }
