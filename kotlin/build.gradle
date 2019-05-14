@@ -1,5 +1,5 @@
 plugins {
-  id 'kotlin-multiplatform' version '1.3.21'
+  id 'kotlin-multiplatform' version '1.3.31'
 }
 repositories {
   maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }
@@ -23,7 +23,7 @@ kotlin {
     commonMain {
       dependencies {
         implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
-        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.1.1"
+        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.2.1'
       }
     }
     commonTest {
@@ -35,18 +35,20 @@ kotlin {
     jvmMain {
       dependencies {
         implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1"
+        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1'
       }
     }
     jvmTest {
       dependencies {
         implementation 'org.jetbrains.kotlin:kotlin-test'
         implementation 'org.jetbrains.kotlin:kotlin-test-junit'
+
+        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.2.1'
       }
     }
     iosMain {
       dependencies {
-        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.1.1"
+        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.2.1'
       }
     }
     iosTest {

@@ -1,4 +1,0 @@
-package sample
-
-fun serialZip() {
-}

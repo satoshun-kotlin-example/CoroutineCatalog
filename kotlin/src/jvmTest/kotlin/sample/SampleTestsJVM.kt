@@ -20,4 +20,8 @@ class SampleTestsJVM {
     }.whenComplete { t, u ->
     }
   }
+
+  @Test
+  fun test2() {
+  }
 }
