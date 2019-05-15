@@ -1,12 +1,15 @@
 package sample
 
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.withTimeout
 import java.util.concurrent.CompletableFuture
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -131,5 +134,19 @@ class Launch2Test {
     println("start runBlockingTest")
     foo1()
     println("finish runBlockingTest")
+  }
+}
+
+class WithTimeoutTest {
+  @Test(expected = TimeoutCancellationException::class)
+  fun withTimeout1() = runBlockingTest {
+    fuga()
+  }
+}
+
+suspend fun fuga() {
+  val uncompleted = CompletableDeferred<Any>()
+  withTimeout(1000) {
+    uncompleted.await()
   }
 }
