@@ -150,3 +150,28 @@ suspend fun fuga() {
     uncompleted.await()
   }
 }
+
+class PauseDispatcherTest {
+  @Test
+  fun test() = runBlockingTest {
+    pauseDispatcher()
+
+    pauseDispatcher {
+      println(3)
+      foo5()
+      println(4)
+      runCurrent()
+      println(5)
+      advanceTimeBy(1_000)
+      println(6)
+    }
+  }
+}
+
+fun CoroutineScope.foo5() {
+  launch {
+    println(1)
+    delay(1_000)
+    println(2)
+  }
+}
