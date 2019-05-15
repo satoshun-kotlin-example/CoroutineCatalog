@@ -1,6 +1,8 @@
 package sample
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -53,7 +55,7 @@ class LaunchTest {
   fun launch1() {
     runBlockingTest {
       println("start runBlockingTest")
-      foo()
+      foo1()
       println("finish runBlockingTest")
     }
   }
@@ -62,13 +64,13 @@ class LaunchTest {
   fun launch2() {
     runBlocking {
       println("start runBlockingTest")
-      foo()
+      foo1()
       println("finish runBlockingTest")
     }
   }
 }
 
-fun CoroutineScope.foo() {
+fun CoroutineScope.foo1() {
   println("start method")
   launch {
     println("start launch block")
@@ -76,4 +78,33 @@ fun CoroutineScope.foo() {
     println("finish launch block")
   }
   println("finish method")
+}
+
+class AsyncTest {
+  @Test
+  fun async1() = runBlockingTest {
+    println("start runBlockingTest")
+    foo2()
+    println("finish runBlockingTest")
+  }
+
+  @Test
+  fun async2() = runBlocking {
+    println("start runBlockingTest")
+    foo2()
+    println("finish runBlockingTest")
+  }
+}
+
+suspend fun foo2() = coroutineScope {
+  println("start method")
+
+  val a = async {
+    println("start launch block")
+    tooLongTask()
+    println("finish launch block")
+    "finish async"
+  }
+  println("finish method")
+  println("finish method ${a.await()}")
 }
