@@ -108,3 +108,28 @@ suspend fun foo2() = coroutineScope {
   println("finish method")
   println("finish method ${a.await()}")
 }
+
+class Launch2Test {
+  @Test
+  fun async1() = runBlockingTest {
+    println("start runBlockingTest")
+    foo1()
+    advanceTimeBy(5_000)
+    println("finish runBlockingTest")
+  }
+
+  @Test
+  fun async2() = runBlockingTest {
+    println("start runBlockingTest")
+    foo1()
+    advanceTimeBy(4_999)
+    println("finish runBlockingTest")
+  }
+
+  @Test
+  fun async3() = runBlockingTest {
+    println("start runBlockingTest")
+    foo1()
+    println("finish runBlockingTest")
+  }
+}
