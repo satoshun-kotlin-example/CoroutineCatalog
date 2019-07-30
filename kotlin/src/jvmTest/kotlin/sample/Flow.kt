@@ -1,6 +1,7 @@
 package sample
 
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -26,5 +27,16 @@ class FlowTest {
       .collect {
         println(it)
       }
+  }
+
+  @Test
+  fun name() = runBlockingTest {
+    val f = callbackFlow {
+      offer(100)
+      offer(101)
+    }
+    f.collect {
+      println(it)
+    }
   }
 }
