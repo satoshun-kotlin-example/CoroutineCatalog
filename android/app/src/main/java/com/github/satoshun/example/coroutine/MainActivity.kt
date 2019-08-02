@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
         .makeText(this@MainActivity, it!!, Toast.LENGTH_LONG)
         .show()
     })
+
     val button: Button = findViewById(R.id.hello)
     button.setOnClickListener {
       viewModel.serialTask()
