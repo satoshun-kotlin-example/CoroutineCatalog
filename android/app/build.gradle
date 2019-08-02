@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
   compileSdkVersion 29
+
   defaultConfig {
     applicationId "com.github.satoshun.example.coroutine"
     minSdkVersion 24
@@ -32,8 +33,8 @@ dependencies {
   implementation 'androidx.core:core-ktx:1.2.0-alpha02'
   implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.2'
-  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.2'
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-RC'
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0-RC'
 
   implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-alpha02'
   implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha02'
