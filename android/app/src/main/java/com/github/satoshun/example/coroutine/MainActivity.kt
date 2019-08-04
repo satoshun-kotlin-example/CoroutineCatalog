@@ -9,7 +9,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -59,36 +62,88 @@ class MainActivity : AppCompatActivity() {
     }
 
     val f = flow {
-      val currentTime = System.currentTimeMillis()
-      repeat(3) {
-        delay(1000)
-        emit("$it ${System.currentTimeMillis() - currentTime} ${Thread.currentThread()}")
+      val startTime = System.currentTimeMillis()
+      repeat(100) {
+        delay(1)
+        emit("$it ${System.currentTimeMillis() - startTime} ${Thread.currentThread()}")
+        println("$it emitted")
       }
     }
 
     // Launch Thread: Main
     // consumer: rapid
     // flowOn:
-    lifecycleScope.launch {
-      Log.d("t1", "start ${Thread.currentThread()}")
-      f
-        .collect {
-          Log.d("t1", "$it : ${Thread.currentThread()}")
-        }
-      Log.d("t1", "start ${Thread.currentThread()}")
-    }
+//    lifecycleScope.launch {
+//      Log.d("t1", "start ${Thread.currentThread()}")
+//      f
+//        .collect {
+//          Log.d("t1", "$it : ${Thread.currentThread()}")
+//        }
+//      Log.d("t1", "start ${Thread.currentThread()}")
+//    }
+//
+//    // Launch Thread: Main
+//    // consumer: slow
+//    // flowOn:
+//    lifecycleScope.launch {
+//      Log.d("t2", "start ${Thread.currentThread()}")
+//      f
+//        .collect {
+//          delay(100)
+//          Log.d("t2", "$it : ${Thread.currentThread()}")
+//        }
+//      Log.d("t2", "finish ${Thread.currentThread()}")
+//    }
+//
+//    // Launch Thread: Main
+//    // consumer: rapid
+//    // flowOn: Dispatchers.IO
+//    lifecycleScope.launch {
+//      Log.d("t3", "start ${Thread.currentThread()}")
+//      f
+//        .flowOn(Dispatchers.IO)
+//        .collect {
+//          Log.d("t3", "$it : ${Thread.currentThread()}")
+//        }
+//      Log.d("t3", "finish ${Thread.currentThread()}")
+//    }
 
     // Launch Thread: Main
     // consumer: slow
-    // flowOn:
+    // flowOn: Dispatchers.IO
+    // buffer:
     lifecycleScope.launch {
-      Log.d("t2", "start ${Thread.currentThread()}")
+      Log.d("t4", "start ${Thread.currentThread()}")
+      val currentTime = System.currentTimeMillis()
       f
+        .buffer(Channel.BUFFERED)
         .collect {
-          delay(2500)
-          Log.d("t2", "$it : ${Thread.currentThread()}")
+          delay(100)
+          Log.d("t4", "$it : ${Thread.currentThread()} ${System.currentTimeMillis() - currentTime}")
         }
-      Log.d("t2", "finish ${Thread.currentThread()}")
+      Log.d("t4", "finish ${Thread.currentThread()}")
     }
+
+    val f2 = callbackFlow {
+      val startTime = System.currentTimeMillis()
+      repeat(100) {
+        delay(10)
+        send("$it ${System.currentTimeMillis() - startTime} ${Thread.currentThread()}")
+        println("$it emitted")
+      }
+    }
+
+//    lifecycleScope.launch {
+//      Log.d("t4", "start ${Thread.currentThread()}")
+//      val currentTime = System.currentTimeMillis()
+//      f2
+//        .buffer(Channel.BUFFERED)
+//        .flowOn(Dispatchers.IO)
+//        .collect {
+//          delay(100)
+//          Log.d("t4", "$it : ${Thread.currentThread()} s${System.currentTimeMillis() - currentTime}")
+//        }
+//      Log.d("t4", "finish ${Thread.currentThread()}")
+//    }
   }
 }
