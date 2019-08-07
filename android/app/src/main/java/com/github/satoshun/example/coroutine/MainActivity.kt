@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
-<<<<<<< HEAD
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -18,10 +17,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-||||||| merged common ancestors
-=======
 import androidx.lifecycle.lifecycleScope
->>>>>>> use launchWhenResumed
 
 class MainActivity : AppCompatActivity() {
   private lateinit var viewModel: MainViewModel
@@ -66,7 +62,6 @@ class MainActivity : AppCompatActivity() {
     button6.setOnClickListener {
       viewModel.parallelTaskWithCancellation()
     }
-<<<<<<< HEAD
 
     val f = flow {
       val startTime = System.currentTimeMillis()
@@ -152,8 +147,6 @@ class MainActivity : AppCompatActivity() {
 //        }
 //      Log.d("t4", "finish ${Thread.currentThread()}")
 //    }
-||||||| merged common ancestors
-=======
 
     supportFragmentManager
       .beginTransaction()
@@ -188,7 +181,6 @@ class MainActivity : AppCompatActivity() {
       println("hogehoge2")
       supportFragmentManager.popBackStack()
     }
->>>>>>> use launchWhenResumed
   }
 }
 
