@@ -1,11 +1,6 @@
 package sample
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.junit.Test
 
 class WithContextTestsJVM {
@@ -16,6 +11,19 @@ class WithContextTestsJVM {
       }
       async {  }
     }
+  }
+
+  @Test
+  fun www2() {
+    runBlocking {
+      GlobalScope.launch {
+        withContext(coroutineContext) {
+        }
+        async {  }
+      }
+      print(1)
+    }
+    print(100)
   }
 }
 

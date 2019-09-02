@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
 
 class MainActivity : AppCompatActivity() {
   private lateinit var viewModel: MainViewModel
@@ -145,5 +147,42 @@ class MainActivity : AppCompatActivity() {
 //        }
 //      Log.d("t4", "finish ${Thread.currentThread()}")
 //    }
+
+    supportFragmentManager
+      .beginTransaction()
+      .add(R.id.container, HogeFragment())
+      .commit()
+
+    lifecycleScope.launchWhenResumed {
+      println("hogehoge5")
+    }
+  }
+
+  override fun onResume() {
+    super.onResume()
+    lifecycleScope.launchWhenResumed {
+      println("hogehoge10")
+    }
+  }
+
+  override fun onPause() {
+    super.onPause()
+    lifecycleScope.launchWhenResumed {
+      println("onPause1")
+    }
+    lifecycleScope.launchWhenCreated {
+      println("onPause2")
+    }
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    lifecycleScope.launchWhenResumed {
+      println("hogehoge2")
+      supportFragmentManager.popBackStack()
+    }
   }
 }
+
+
+class HogeFragment : Fragment()

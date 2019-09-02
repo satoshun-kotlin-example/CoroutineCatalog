@@ -1,5 +1,6 @@
 package com.github.satoshun.example.coroutine
 
+import kotlinx.coroutines.*
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -10,8 +11,23 @@ import org.junit.Assert.*
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class ExampleUnitTest {
-  @Test
-  fun addition_isCorrect() {
-    assertEquals(4, 2 + 2)
-  }
+    @Test
+    fun addition_isCorrect() {
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                delay(500)
+
+                println(10000)
+            }
+
+            println(10)
+        }
+        println(1000)
+
+    }
+
+    @Test
+    fun courutine() {
+        val scope = CoroutineScope(Dispatchers.Main).launch {  }
+    }
 }
