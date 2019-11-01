@@ -10,14 +10,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.buffer
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import androidx.lifecycle.lifecycleScope
 
 class MainActivity : AppCompatActivity() {
   private lateinit var viewModel: MainViewModel
@@ -114,17 +110,17 @@ class MainActivity : AppCompatActivity() {
     // consumer: slow
     // flowOn: Dispatchers.IO
     // buffer:
-    lifecycleScope.launch {
-      Log.d("t4", "start ${Thread.currentThread()}")
-      val currentTime = System.currentTimeMillis()
-      f
-        .buffer(Channel.BUFFERED)
-        .collect {
-          delay(100)
-          Log.d("t4", "$it : ${Thread.currentThread()} ${System.currentTimeMillis() - currentTime}")
-        }
-      Log.d("t4", "finish ${Thread.currentThread()}")
-    }
+//    lifecycleScope.launch {
+//      Log.d("t4", "start ${Thread.currentThread()}")
+//      val currentTime = System.currentTimeMillis()
+//      f
+//        .buffer(Channel.BUFFERED)
+//        .collect {
+//          delay(100)
+//          Log.d("t4", "$it : ${Thread.currentThread()} ${System.currentTimeMillis() - currentTime}")
+//        }
+//      Log.d("t4", "finish ${Thread.currentThread()}")
+//    }
 
     val f2 = callbackFlow {
       val startTime = System.currentTimeMillis()
@@ -147,6 +143,19 @@ class MainActivity : AppCompatActivity() {
 //        }
 //      Log.d("t4", "finish ${Thread.currentThread()}")
 //    }
+
+    lifecycleScope.launch {
+      Log.d("t4", "start ${Thread.currentThread()}")
+      val currentTime = System.currentTimeMillis()
+      f2
+        .conflate()
+        .flowOn(Dispatchers.IO)
+        .collect {
+          delay(100)
+          Log.d("t4", "$it : ${Thread.currentThread()} s${System.currentTimeMillis() - currentTime}")
+        }
+      Log.d("t4", "finish ${Thread.currentThread()}")
+    }
 
     supportFragmentManager
       .beginTransaction()
