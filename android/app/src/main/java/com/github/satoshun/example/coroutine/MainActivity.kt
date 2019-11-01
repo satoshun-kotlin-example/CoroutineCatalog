@@ -180,18 +180,18 @@ class MainActivity : AppCompatActivity() {
       }
 
       coroutineScope {
-        val defer1 = async {
-          flow1.collect {
-            print("HOGE1")
+        awaitAll(
+          async {
+            flow1.collect {
+              print("HOGE1")
+            }
+          },
+          async {
+            flow2.collect {
+              println("HOGE2")
+            }
           }
-        }
-        val defer2 = async {
-          flow2.collect {
-            println("HOGE2")
-          }
-        }
-        defer1.await()
-        defer2.await()
+        )
       }
       println("LAST")
     }
