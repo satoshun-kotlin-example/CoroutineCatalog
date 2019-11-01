@@ -187,7 +187,7 @@ class MainActivity : AppCompatActivity() {
         }
         val defer2 = async {
           flow2.collect {
-            println("HOGE")
+            println("HOGE2")
           }
         }
         defer1.await()
