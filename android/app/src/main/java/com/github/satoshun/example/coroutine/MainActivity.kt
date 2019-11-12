@@ -80,14 +80,14 @@ class MainActivity : AppCompatActivity() {
       coroutineScope {
         launch {
           delay(10000)
-          println("hoge1")
+          println("hogehoge1")
         }
         launch {
-          delay(3000)
-          println("hoge2")
+          delay(8000)
+          println("hogehoge2")
         }
       }
-      println("hoge3")
+      println("hogehoge3")
     }
 
     // Launch Thread: Main
