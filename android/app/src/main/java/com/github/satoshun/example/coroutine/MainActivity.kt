@@ -10,8 +10,18 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
   private lateinit var viewModel: MainViewModel
@@ -64,6 +74,20 @@ class MainActivity : AppCompatActivity() {
         emit("$it ${System.currentTimeMillis() - startTime} ${Thread.currentThread()}")
         println("$it emitted")
       }
+    }
+
+    lifecycleScope.launch {
+      coroutineScope {
+        launch {
+          delay(10000)
+          println("hoge1")
+        }
+        launch {
+          delay(3000)
+          println("hoge2")
+        }
+      }
+      println("hoge3")
     }
 
     // Launch Thread: Main
@@ -222,6 +246,5 @@ class MainActivity : AppCompatActivity() {
     }
   }
 }
-
 
 class HogeFragment : Fragment()
