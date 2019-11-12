@@ -7,17 +7,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.buffer
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
-import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 class MainActivity : AppCompatActivity() {
   private lateinit var viewModel: MainViewModel
@@ -25,7 +19,7 @@ class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
-    viewModel = ViewModelProviders.of(this).get()
+    viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get()
 
     viewModel.userName.observe(this, Observer {
       Toast
@@ -114,17 +108,17 @@ class MainActivity : AppCompatActivity() {
     // consumer: slow
     // flowOn: Dispatchers.IO
     // buffer:
-    lifecycleScope.launch {
-      Log.d("t4", "start ${Thread.currentThread()}")
-      val currentTime = System.currentTimeMillis()
-      f
-        .buffer(Channel.BUFFERED)
-        .collect {
-          delay(100)
-          Log.d("t4", "$it : ${Thread.currentThread()} ${System.currentTimeMillis() - currentTime}")
-        }
-      Log.d("t4", "finish ${Thread.currentThread()}")
-    }
+//    lifecycleScope.launch {
+//      Log.d("t4", "start ${Thread.currentThread()}")
+//      val currentTime = System.currentTimeMillis()
+//      f
+//        .buffer(Channel.BUFFERED)
+//        .collect {
+//          delay(100)
+//          Log.d("t4", "$it : ${Thread.currentThread()} ${System.currentTimeMillis() - currentTime}")
+//        }
+//      Log.d("t4", "finish ${Thread.currentThread()}")
+//    }
 
     val f2 = callbackFlow {
       val startTime = System.currentTimeMillis()
@@ -148,6 +142,19 @@ class MainActivity : AppCompatActivity() {
 //      Log.d("t4", "finish ${Thread.currentThread()}")
 //    }
 
+    lifecycleScope.launch {
+      Log.d("t4", "start ${Thread.currentThread()}")
+      val currentTime = System.currentTimeMillis()
+      f2
+        .conflate()
+        .flowOn(Dispatchers.IO)
+        .collect {
+          delay(100)
+          Log.d("t4", "$it : ${Thread.currentThread()} s${System.currentTimeMillis() - currentTime}")
+        }
+      Log.d("t4", "finish ${Thread.currentThread()}")
+    }
+
     supportFragmentManager
       .beginTransaction()
       .add(R.id.container, HogeFragment())
@@ -155,6 +162,38 @@ class MainActivity : AppCompatActivity() {
 
     lifecycleScope.launchWhenResumed {
       println("hogehoge5")
+    }
+
+    lifecycleScope.launch {
+      val flow1 = flow {
+        delay(100000)
+        emit(100)
+        emit(2000)
+      }
+      val flow2 = flow {
+        delay(3000)
+        emit(100)
+        emit(2000)
+      }
+
+      flow1.combine(flow2) { a, b ->
+      }
+
+      coroutineScope {
+        awaitAll(
+          async {
+            flow1.collect {
+              print("HOGE1")
+            }
+          },
+          async {
+            flow2.collect {
+              println("HOGE2")
+            }
+          }
+        )
+      }
+      println("LAST")
     }
   }
 
