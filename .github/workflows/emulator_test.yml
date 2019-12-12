@@ -21,16 +21,14 @@ jobs:
       - name: Configure Gradle
         # Initial gradle configuration, install dependencies, etc
         run: ./gradlew help
-        working-directory: ./android
       - name: Build project
         run: ./gradlew assemble --stacktrace
-        working-directory: ./android
       # - name: Run tests
       #   run: ./gradlew test --stacktrace
       - name: Run instrumentation tests
         uses: malinskiy/action-android/emulator-run-cmd@release/0.0.5
         with:
-          cmd: cd android && ./gradlew connectedCheck --stacktrace
+          cmd: ./gradlew connectedCheck --stacktrace
           api: 25
           tag: default
           abi: x86
