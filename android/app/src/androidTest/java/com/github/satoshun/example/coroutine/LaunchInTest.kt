@@ -55,7 +55,6 @@ class LaunchInTest {
     Log.e("source", "finished")
   }
 
-  @Ignore("crash")
   @Test
   fun source_catch2() {
     val job = flow {
