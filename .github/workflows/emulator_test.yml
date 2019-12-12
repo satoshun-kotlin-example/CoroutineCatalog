@@ -31,7 +31,7 @@ jobs:
         uses: malinskiy/action-android/emulator-run-cmd@release/0.0.5
         with:
           cmd: ./gradlew connectedCheck --stacktrace
-          api: 18
+          api: 25
           tag: default
           abi: x86
           working-directory: ./android
