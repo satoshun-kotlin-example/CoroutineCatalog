@@ -32,4 +32,5 @@ fun MainCoroutineRule.runBlocking(block: suspend () -> Unit) = this.testDispatch
   block()
 }
 
+@ExperimentalCoroutinesApi
 fun MainCoroutineRule.scope() = CoroutineScope(testDispatcher)
