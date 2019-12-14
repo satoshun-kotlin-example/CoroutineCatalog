@@ -9,12 +9,26 @@ import org.junit.runner.RunWith
 class SuspendFuncTest {
   @get:Rule val coroutineRule = MainCoroutineRule()
 
-  private val repository = Repository()
+  private val viewModel = TestViewModel()
 
   @Test
   fun pattern1() {
     coroutineRule.runBlocking {
-      repository.test()
+      viewModel.test1()
+    }
+  }
+
+  @Test
+  fun pattern2() {
+    coroutineRule.runBlocking {
+      viewModel.test2()
+    }
+  }
+
+  @Test
+  fun pattern3() {
+    coroutineRule.runBlocking {
+      viewModel.test3()
     }
   }
 }
