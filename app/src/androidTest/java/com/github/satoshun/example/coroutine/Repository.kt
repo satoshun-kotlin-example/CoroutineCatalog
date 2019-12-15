@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
@@ -29,6 +30,7 @@ class TestViewModel(
     repository
       .exception1()
       .onEach { print(it) }
+      .catch { print(it) }
       .launchIn(viewModelScope)
   }
 
@@ -79,9 +81,6 @@ class Repository {
   }
 
   fun exception1(): Flow<String> = flow {
-    delay(1000)
-    emit("1")
-    delay(2000)
     throw IOException("exception")
   }
 }
