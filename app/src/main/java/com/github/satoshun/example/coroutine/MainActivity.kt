@@ -174,7 +174,10 @@ class MainActivity : AppCompatActivity() {
         .flowOn(Dispatchers.IO)
         .collect {
           delay(100)
-          Log.d("t4", "$it : ${Thread.currentThread()} s${System.currentTimeMillis() - currentTime}")
+          Log.d(
+            "t4",
+            "$it : ${Thread.currentThread()} s${System.currentTimeMillis() - currentTime}"
+          )
         }
       Log.d("t4", "finish ${Thread.currentThread()}")
     }
