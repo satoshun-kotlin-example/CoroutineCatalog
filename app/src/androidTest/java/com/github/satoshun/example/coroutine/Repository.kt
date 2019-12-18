@@ -37,9 +37,10 @@ class TestViewModel(
       .launchIn(viewModelScope)
   }
 
-  val user1 = liveData {
-    val result = repository.success()
-    emit(result)
+  val user1 = liveData<String> {
+    runCatching { repository.success() }
+      .onSuccess { emit(it) }
+      .onFailure { emit(it.message.toString()) }
   }
 
   val user2 = liveData<String> {
