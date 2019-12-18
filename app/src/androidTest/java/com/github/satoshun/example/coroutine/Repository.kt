@@ -1,6 +1,7 @@
 package com.github.satoshun.example.coroutine
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -32,8 +33,19 @@ class TestViewModel(
       .exception1()
       .onEach { print(it) }
       .catch { print(it) }
-      .onCompletion {  }
+      .onCompletion { }
       .launchIn(viewModelScope)
+  }
+
+  val user1 = liveData {
+    val result = repository.success()
+    emit(result)
+  }
+
+  val user2 = liveData<String> {
+    runCatching { repository.exception() }
+      .onSuccess { emit(it) }
+      .onFailure { emit(it.message.toString()) }
   }
 
   fun test1() {
