@@ -3,20 +3,30 @@ package com.github.satoshun.example.coroutine
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.io.IOException
 
 class TestViewModel(
-  private val repository: Repository = Repository()
+  private val repository: TestRepository = TestRepository()
 ) : ViewModel() {
+
+  val queryChannel = BroadcastChannel<String>(Channel.CONFLATED)
+  val searchResult = queryChannel
+    .asFlow()
+    .debounce(500)
+    .mapLatest {
+      "$it $it"
+    }
+
   init {
     viewModelScope.launch {
       repository
@@ -74,28 +84,5 @@ class TestViewModel(
         .onSuccess { println("Success") }
         .onFailure { println("Failure") }
     }
-  }
-}
-
-class Repository {
-  suspend fun success(): String {
-    delay(1000)
-    return "test"
-  }
-
-  suspend fun exception(): String {
-    delay(1000)
-    throw IOException("test2")
-  }
-
-  fun success1(): Flow<String> = flow {
-    delay(1000)
-    emit("1")
-    delay(2000)
-    emit("2")
-  }
-
-  fun exception1(): Flow<String> = flow {
-    throw IOException("exception")
   }
 }
