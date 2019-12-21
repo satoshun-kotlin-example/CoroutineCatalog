@@ -20,6 +20,9 @@ import androidx.lifecycle.Observer
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * Gets the value of a [LiveData] or waits for it to have one, with a timeout.
@@ -53,4 +56,21 @@ fun <T> LiveData<T>.getOrAwaitValue(
 
   @Suppress("UNCHECKED_CAST")
   return data as T
+}
+
+/**
+ * Observes a [LiveData] until the `block` is done executing.
+ */
+@UseExperimental(ExperimentalContracts::class)
+inline fun <T> LiveData<T>.observeForTesting(block: LiveData<T>.() -> Unit) {
+  contract {
+    callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+  }
+  val observer = Observer<T> { }
+  try {
+    observeForever(observer)
+    block()
+  } finally {
+    removeObserver(observer)
+  }
 }

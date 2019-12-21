@@ -1,10 +1,13 @@
 package com.github.satoshun.example.coroutine
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -15,17 +18,24 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
+@ExperimentalCoroutinesApi
 class TestViewModel(
   private val repository: TestRepository = TestRepository()
 ) : ViewModel() {
 
   val queryChannel = BroadcastChannel<String>(Channel.CONFLATED)
-  val searchResult = queryChannel
+  val _result = queryChannel
     .asFlow()
+    .onEach {
+      println(it)
+    }
     .debounce(500)
     .mapLatest {
+      delay(1000)
       "$it $it"
     }
+
+  val result = _result.asLiveData()
 
   init {
     viewModelScope.launch {
