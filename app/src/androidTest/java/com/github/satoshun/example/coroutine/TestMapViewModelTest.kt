@@ -35,7 +35,27 @@ class TestMapViewModelTest {
 
     assertThat(actual).isEmpty()
 
-    coroutineRule.testDispatcher.advanceTimeBy(1000)
+    coroutineRule.testDispatcher.advanceTimeBy(2000)
     assertThat(actual).isEqualTo(listOf("latest test2"))
+  }
+
+  @Test
+  fun test2() = coroutineRule.runBlocking {
+    val actual = mutableListOf<String>()
+    viewModel.old.onEach {
+      actual.add(it)
+    }.launchIn(coroutineRule.scope())
+
+    viewModel.source.send("test")
+
+    assertThat(actual).isEmpty()
+
+    coroutineRule.testDispatcher.advanceTimeBy(300)
+    viewModel.source.send("test2")
+
+    assertThat(actual).isEmpty()
+
+    coroutineRule.testDispatcher.advanceTimeBy(2000)
+    assertThat(actual).isEqualTo(listOf("old test"))
   }
 }
