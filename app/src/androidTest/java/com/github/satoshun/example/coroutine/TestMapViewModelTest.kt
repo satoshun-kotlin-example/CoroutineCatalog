@@ -46,17 +46,62 @@ class TestMapViewModelTest {
       actual.add(it)
     }.launchIn(coroutineRule.scope())
 
-    viewModel.source.send("test")
+    assertThat(viewModel.source2.offer("test")).isTrue()
 
     assertThat(actual).isEmpty()
 
     coroutineRule.testDispatcher.advanceTimeBy(300)
-    viewModel.source.send("test2")
+    assertThat(viewModel.source2.offer("test2")).isFalse()
 
     assertThat(actual).isEmpty()
 
-    coroutineRule.testDispatcher.advanceTimeBy(2000)
+    coroutineRule.testDispatcher.advanceTimeBy(5000)
     assertThat(actual).isEqualTo(listOf("old test"))
+
+    job.cancel()
+  }
+
+  @Test
+  fun test3() = coroutineRule.runBlocking {
+    val actual = mutableListOf<String>()
+    val job = viewModel.conflate
+      .onEach { actual.add(it) }
+      .launchIn(coroutineRule.scope())
+
+    assertThat(viewModel.source3.offer("test")).isTrue()
+
+    assertThat(actual).isEmpty()
+
+    coroutineRule.testDispatcher.advanceTimeBy(300)
+    viewModel.source3.offer("test")
+
+    assertThat(actual).isEmpty()
+
+    coroutineRule.testDispatcher.advanceTimeBy(5000)
+    assertThat(actual).isEqualTo(listOf("old test"))
+
+    job.cancel()
+  }
+
+  @Test
+  fun test4() = coroutineRule.runBlocking {
+    val actual = mutableListOf<String>()
+    val job = viewModel.conflate
+      .onEach { actual.add(it) }
+      .launchIn(coroutineRule.scope())
+
+    assertThat(viewModel.source3.offer("test")).isTrue()
+
+    assertThat(actual).isEmpty()
+
+    coroutineRule.testDispatcher.advanceTimeBy(300)
+    viewModel.source3.offer("test2")
+    viewModel.source3.offer("test3")
+
+    assertThat(actual).isEmpty()
+
+    coroutineRule.testDispatcher.advanceTimeBy(5000)
+    assertThat(actual).isEqualTo(listOf("old test", "old test3"))
 
     job.cancel()
   }
