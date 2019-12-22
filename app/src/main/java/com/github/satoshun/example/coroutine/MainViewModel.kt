@@ -4,11 +4,24 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 
 class MainViewModel : ViewModel() {
+  val source = BroadcastChannel<String>(Channel.CONFLATED)
+  val old = source.asFlow()
+    .sample(1000)
+    .map {
+      delay(1000)
+      "old $it"
+    }
+
   val userName = MutableLiveData<String>()
 
   fun serialTask() {

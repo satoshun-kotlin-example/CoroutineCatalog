@@ -21,6 +21,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -30,6 +32,20 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
     viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get()
+
+    viewModel.old
+      .onEach {
+        println("HOGEFUGA: $it")
+      }
+      .launchIn(lifecycleScope)
+    lifecycleScope.launch {
+      delay(1000)
+      viewModel.source.send("test2")
+      delay(1)
+      viewModel.source.send("test")
+      delay(1000)
+      viewModel.source.send("test3")
+    }
 
     viewModel.userName.observe(this, Observer {
       Toast
