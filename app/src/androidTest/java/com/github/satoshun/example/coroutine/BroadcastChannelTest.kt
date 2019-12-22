@@ -22,11 +22,12 @@ class BroadcastChannelTest {
     viewModel.result.observeForTesting {
       viewModel.queryChannel.send("test1")
       assertThat(value).isNull()
+      viewModel.queryChannel.send("test2")
 
       coroutineRule.testDispatcher.advanceTimeBy(2000)
 
       val time = measureTimeMillis {
-        assertThat(getOrAwaitValue()).isEqualTo("test1 test1")
+        assertThat(getOrAwaitValue()).isEqualTo("test2 test2")
       }
       println("time $time")
     }

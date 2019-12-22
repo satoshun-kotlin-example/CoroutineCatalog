@@ -7,6 +7,7 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.withTimeout
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
@@ -29,7 +30,9 @@ class MainCoroutineRule(
 
 @ExperimentalCoroutinesApi
 fun MainCoroutineRule.runBlocking(block: suspend () -> Unit) = this.testDispatcher.runBlockingTest {
-  block()
+  withTimeout(5000) {
+    block()
+  }
 }
 
 @ExperimentalCoroutinesApi
