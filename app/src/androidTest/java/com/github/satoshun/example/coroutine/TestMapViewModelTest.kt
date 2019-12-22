@@ -42,7 +42,7 @@ class TestMapViewModelTest {
   @Test
   fun test2() = coroutineRule.runBlocking {
     val actual = mutableListOf<String>()
-    viewModel.old.onEach {
+    val job = viewModel.old.onEach {
       actual.add(it)
     }.launchIn(coroutineRule.scope())
 
@@ -57,5 +57,7 @@ class TestMapViewModelTest {
 
     coroutineRule.testDispatcher.advanceTimeBy(2000)
     assertThat(actual).isEqualTo(listOf("old test"))
+
+    job.cancel()
   }
 }

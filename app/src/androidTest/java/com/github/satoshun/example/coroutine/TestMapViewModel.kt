@@ -4,9 +4,9 @@ import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.sample
 
 class TestMapViewModel {
   val source = BroadcastChannel<String>(Channel.CONFLATED)
@@ -18,7 +18,7 @@ class TestMapViewModel {
     }
 
   val old = source.asFlow()
-    .conflate()
+    .sample(1000)
     .map {
       delay(1000)
       "old $it"
