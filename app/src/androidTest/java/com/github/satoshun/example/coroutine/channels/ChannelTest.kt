@@ -6,6 +6,7 @@ import com.github.satoshun.example.coroutine.scope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.broadcast
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -53,6 +54,30 @@ class ChannelTest {
 
     coroutineRule.scope().launch {
       channel.asFlow().collect {
+        println("2 $it")
+      }
+    }
+
+    channel.send("test1")
+    channel.send("test2")
+    channel.send("test3")
+    channel.send("test4")
+  }
+
+  // conflated
+  @Test
+  fun test3() = coroutineRule.runBlocking {
+    val channel = Channel<String>(Channel.CONFLATED)
+    val source = channel.broadcast()
+
+    coroutineRule.scope().launch {
+      source.asFlow().collect {
+        println("1 $it")
+      }
+    }
+
+    coroutineRule.scope().launch {
+      source.asFlow().collect {
         println("2 $it")
       }
     }
