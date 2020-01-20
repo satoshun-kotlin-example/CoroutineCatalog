@@ -2,9 +2,9 @@ package com.github.satoshun.example.coroutine
 
 import com.github.satoshun.example.coroutine.rule.MainCoroutineRule
 import com.github.satoshun.example.coroutine.rule.runBlocking
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.junit.Ignore
@@ -21,7 +21,9 @@ class AsyncCoroutineScopeTest {
   @Test
   fun launchTest() = coroutineRule.runBlocking {
     println("start")
-    runCatching { launchException() }
+    runCatching {
+      launch { throw IOException("launchException") }
+    }
     println("end")
   }
 
@@ -47,15 +49,33 @@ class AsyncCoroutineScopeTest {
     a.await()
     println("end")
   }
-}
 
-fun CoroutineScope.launchException() {
-  launch {
-    throw IOException("launchException")
+  @Ignore("throw exception")
+  @Test
+  fun async3() = coroutineRule.runBlocking {
+    println("start")
+    val result = runCatching {
+      val a = async<String> { throw IOException("async error") }
+      a.await()
+    }
+    print(result.exceptionOrNull())
+    println("end")
+  }
+
+  @Test
+  fun async4() = coroutineRule.runBlocking {
+    println("start")
+    val a = runCatching {
+      coroutineScope {
+        val a = async<String> { throw IOException("async error") }
+        a.await()
+      }
+    }
+    println(a.exceptionOrNull())
+    println("end")
   }
 }
 
 suspend fun launchException2() = suspendCancellableCoroutine<Unit> { cont ->
   cont.resumeWithException(IOException("launchException"))
-//  throw IOException("launchException")
 }
