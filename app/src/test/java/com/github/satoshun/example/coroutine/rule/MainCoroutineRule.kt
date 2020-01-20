@@ -29,11 +29,12 @@ class MainCoroutineRule(
 }
 
 @ExperimentalCoroutinesApi
-fun MainCoroutineRule.runBlocking(block: suspend () -> Unit) = this.testDispatcher.runBlockingTest {
-  withTimeout(5000) {
-    block()
+fun MainCoroutineRule.runBlocking(block: suspend CoroutineScope.() -> Unit) =
+  this.testDispatcher.runBlockingTest {
+    withTimeout(5000) {
+      block()
+    }
   }
-}
 
 @ExperimentalCoroutinesApi
 fun MainCoroutineRule.scope() = CoroutineScope(testDispatcher)
