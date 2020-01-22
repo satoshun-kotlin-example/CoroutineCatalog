@@ -19,7 +19,7 @@ class AsyncCoroutineScopeTest {
 
   @Ignore("throw exception")
   @Test
-  fun launchTest() = coroutineRule.runBlocking {
+  fun launch1() = coroutineRule.runBlocking {
     println("start")
     runCatching {
       launch { throw IOException("launchException") }
@@ -28,9 +28,20 @@ class AsyncCoroutineScopeTest {
   }
 
   @Test
-  fun launchTest2() = coroutineRule.runBlocking {
+  fun launch2() = coroutineRule.runBlocking {
     println("start")
     runCatching { launchException2() }
+    println("end")
+  }
+
+  @Test
+  fun launch3() = coroutineRule.runBlocking {
+    println("start")
+    runCatching {
+      coroutineScope {
+        launch { throw IOException("launchException") }
+      }
+    }
     println("end")
   }
 
