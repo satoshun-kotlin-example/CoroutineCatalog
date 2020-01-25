@@ -182,4 +182,19 @@ class ScopeTest {
     }
     Thread.sleep(1000)
   }
+
+  @Test
+  fun scope10() {
+    val scope = CoroutineScope(SupervisorJob())
+    scope.launch {
+      val a = async {
+        println("b $this")
+        delay(10000)
+        ""
+      }
+      println("a $this")
+      a.await()
+    }
+    Thread.sleep(1000)
+  }
 }
