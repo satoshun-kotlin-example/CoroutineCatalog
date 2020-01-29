@@ -97,19 +97,22 @@ class ScopeTest {
   fun scope6() {
     val scope = CoroutineScope(SupervisorJob())
     scope.launch {
-      runCatching {
+      val a = runCatching {
         supervisorScope {
           launch {
             delay(100)
             throw Exception("hoge")
           }
           launch {
+            println("start 1")
+            delay(50)
+            println("start 2")
             delay(500)
             println("finished")
           }
         }
       }
-      println("outer finished")
+      println("outer finished $a")
     }
     Thread.sleep(1000)
   }
@@ -118,19 +121,22 @@ class ScopeTest {
   fun scope7() {
     val scope = CoroutineScope(SupervisorJob())
     scope.launch {
-      runCatching {
+      val a = runCatching {
         coroutineScope {
           launch {
             delay(100)
             throw Exception("hoge")
           }
           launch {
+            println("start 1")
+            delay(50)
+            println("start 2")
             delay(500)
             println("finished")
           }
         }
       }
-      println("outer finished")
+      println("outer finished $a")
     }
     Thread.sleep(1000)
   }
@@ -139,7 +145,7 @@ class ScopeTest {
   fun scope8() {
     val scope = CoroutineScope(SupervisorJob())
     scope.launch {
-      runCatching {
+      val a = runCatching {
         coroutineScope {
           val a = async {
             delay(100)
@@ -151,10 +157,11 @@ class ScopeTest {
             println("finished")
           }
           b.await()
-          a.await()
+//          a.await()
+          println("end")
         }
       }
-      println("outer scope")
+      println("outer scope $a")
     }
     Thread.sleep(1000)
   }
@@ -163,7 +170,7 @@ class ScopeTest {
   fun scope9() {
     val scope = CoroutineScope(SupervisorJob())
     scope.launch {
-      runCatching {
+      val a = runCatching {
         supervisorScope {
           val a = async {
             delay(100)
@@ -178,7 +185,7 @@ class ScopeTest {
           b.await()
         }
       }
-      println("outer scope")
+      println("outer scope $a")
     }
     Thread.sleep(1000)
   }
@@ -192,7 +199,15 @@ class ScopeTest {
         delay(10000)
         ""
       }
+      println("aa $a")
       println("a $this")
+
+      val b = launch {
+        println("c $this")
+        delay(10000)
+      }
+      println("cc $b")
+
       a.await()
     }
     Thread.sleep(1000)
