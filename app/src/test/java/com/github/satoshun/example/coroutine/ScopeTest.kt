@@ -67,11 +67,12 @@ class ScopeTest {
     scope.launch {
       launch {
         delay(100)
+        println(1)
         throw Exception("hoge")
       }
       launch {
         delay(500)
-        println("finished")
+        println("not")
       }
     }
     Thread.sleep(1000)
@@ -79,15 +80,18 @@ class ScopeTest {
 
   @Test
   fun scope5() {
-    val scope = CoroutineScope(SupervisorJob())
-    scope.launch(SupervisorJob()) {
-      launch {
-        delay(100)
-        throw Exception("hoge")
-      }
-      launch {
-        delay(500)
-        println("finished")
+    val scope = CoroutineScope(Job())
+    scope.launch {
+      supervisorScope {
+        launch {
+          delay(100)
+          println(1)
+          throw Exception("hoge")
+        }
+        launch {
+          delay(500)
+          println(2)
+        }
       }
     }
     Thread.sleep(1000)
@@ -101,14 +105,15 @@ class ScopeTest {
         supervisorScope {
           launch {
             delay(100)
+            println(3)
             throw Exception("hoge")
           }
           launch {
-            println("start 1")
+            println(1)
             delay(50)
-            println("start 2")
+            println(2)
             delay(500)
-            println("finished")
+            println(4)
           }
         }
       }
@@ -125,14 +130,15 @@ class ScopeTest {
         coroutineScope {
           launch {
             delay(100)
+            println(3)
             throw Exception("hoge")
           }
           launch {
-            println("start 1")
+            println(1)
             delay(50)
-            println("start 2")
+            println(2)
             delay(500)
-            println("finished")
+            println("not")
           }
         }
       }
@@ -149,15 +155,16 @@ class ScopeTest {
         coroutineScope {
           val a = async {
             delay(100)
+            println(2)
             throw Exception("hoge")
           }
           val b = async {
-            println("start")
+            println(1)
             delay(500)
-            println("finished")
+            println("not")
           }
           b.await()
-//          a.await()
+          a.await()
           println("end")
         }
       }
@@ -174,18 +181,20 @@ class ScopeTest {
         supervisorScope {
           val a = async {
             delay(100)
+            println(2)
             throw Exception("hoge")
           }
           val b = async {
-            println("start")
+            println(1)
             delay(500)
-            println("finished")
+            println("not")
           }
           a.await()
+          println("not")
           b.await()
         }
       }
-      println("outer scope $a")
+      println("3 $a")
     }
     Thread.sleep(1000)
   }
