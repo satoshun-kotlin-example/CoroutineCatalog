@@ -7,6 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlin.concurrent.thread
@@ -233,7 +236,7 @@ class MainActivity : AppCompatActivity() {
 
       // simulate background processing
       thread {
-        while (true) {
+        while (current <= 50) {
           liveData.postValue(current)
           stateFlow.value = current
           current += 1
@@ -242,6 +245,7 @@ class MainActivity : AppCompatActivity() {
       }
 
       lifecycleScope.launchWhenStarted {
+        println("launchWhenStarted")
         stateFlow.collect {
           println("stateFlow $it")
         }
@@ -250,24 +254,53 @@ class MainActivity : AppCompatActivity() {
         println("liveData $it")
       }
     }
-    liveDataAndStateFlowLifecycleTest()
+//    liveDataAndStateFlowLifecycleTest()
+
+    fun sharedFlowTest() {
+      val flow = MutableSharedFlow<Int>(
+        replay = 0,
+        extraBufferCapacity = 0,
+        onBufferOverflow = BufferOverflow.SUSPEND
+      )
+
+      lifecycleScope.launchWhenStarted {
+        flow.emit(100)
+        println("sharedFlowTest emitted 1")
+
+        delay(100)
+
+        flow.emit(200)
+        println("sharedFlowTest emitted 2")
+
+        flow.emit(300)
+        println("sharedFlowTest emitted 3")
+      }
+
+      lifecycleScope.launchWhenStarted {
+        flow.collect {
+          println("sharedFlowTest collect $it")
+          delay(3000)
+        }
+      }
+    }
+    sharedFlowTest()
   }
 
   override fun onResume() {
     super.onResume()
-    lifecycleScope.launchWhenResumed {
-      println("hogehoge10")
-    }
+//    lifecycleScope.launchWhenResumed {
+//      println("hogehoge10")
+//    }
   }
 
   override fun onPause() {
     super.onPause()
-    lifecycleScope.launchWhenResumed {
-      println("onPause1")
-    }
-    lifecycleScope.launchWhenCreated {
-      println("onPause2")
-    }
+//    lifecycleScope.launchWhenResumed {
+//      println("onPause1")
+//    }
+//    lifecycleScope.launchWhenCreated {
+//      println("onPause2")
+//    }
   }
 
   override fun onDestroy() {
