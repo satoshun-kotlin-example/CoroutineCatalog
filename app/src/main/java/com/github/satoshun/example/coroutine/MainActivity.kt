@@ -287,7 +287,7 @@ class MainActivity : AppCompatActivity() {
 //    sharedFlowTest()
 
     fun singleFlowTest() {
-      val flow = SingleFlow<Int>(replay = 1)
+      val flow = SingleFlow<Int>()
 
       lifecycleScope.launchWhenStarted {
         flow.singleCollect { println("one $it") }
@@ -329,12 +329,11 @@ class MainActivity : AppCompatActivity() {
 
 @ExperimentalCoroutinesApi
 fun <T> SingleFlow(
-  replay: Int = 0,
   extraBufferCapacity: Int = 0,
   onBufferOverflow: BufferOverflow = BufferOverflow.SUSPEND
 ): SingleFlow<T> {
   return MutableSharedFlow(
-    replay = replay,
+    replay = 1,
     extraBufferCapacity = extraBufferCapacity,
     onBufferOverflow = onBufferOverflow,
   )
