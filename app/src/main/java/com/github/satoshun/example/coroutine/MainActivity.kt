@@ -12,6 +12,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
@@ -283,7 +284,21 @@ class MainActivity : AppCompatActivity() {
         }
       }
     }
-    sharedFlowTest()
+//    sharedFlowTest()
+
+    fun singleFlowTest() {
+      val flow = SingleFlow<Int>(replay = 1)
+
+      lifecycleScope.launchWhenStarted {
+        flow.singleCollect { println("one $it") }
+      }
+      lifecycleScope.launchWhenStarted {
+        flow.singleCollect { println("two $it") }
+      }
+
+      println(flow.tryEmit(Event(10)))
+    }
+    singleFlowTest()
   }
 
   override fun onResume() {
@@ -311,5 +326,36 @@ class MainActivity : AppCompatActivity() {
     }
   }
 }
+
+@ExperimentalCoroutinesApi
+fun <T> SingleFlow(
+  replay: Int = 0,
+  extraBufferCapacity: Int = 0,
+  onBufferOverflow: BufferOverflow = BufferOverflow.SUSPEND
+): SingleFlow<T> {
+  return MutableSharedFlow(
+    replay = replay,
+    extraBufferCapacity = extraBufferCapacity,
+    onBufferOverflow = onBufferOverflow,
+  )
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+typealias SingleFlow<T> = MutableSharedFlow<Event<T>>
+
+suspend inline fun <T> SingleFlow<T>.singleCollect(
+  crossinline action: suspend (value: T) -> Unit
+) {
+  this.filter { !it.isConsumed }
+    .collect {
+      it.isConsumed = true
+      action(it.value)
+    }
+}
+
+class Event<T>(
+  val value: T,
+  var isConsumed: Boolean = false
+)
 
 class HogeFragment : Fragment()
