@@ -1,6 +1,7 @@
 package com.github.satoshun.example.coroutine
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
@@ -284,6 +285,7 @@ class MainActivity : AppCompatActivity() {
         }
       }
     }
+
 //    sharedFlowTest()
 
     fun singleFlowTest() {
@@ -357,4 +359,10 @@ class Event<T>(
   var isConsumed: Boolean = false
 )
 
-class HogeFragment : Fragment()
+class HogeFragment : Fragment() {
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+
+    viewLifecycleOwner.lifecycleScope
+  }
+}
