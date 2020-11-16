@@ -10,11 +10,11 @@ class SharedFlowTest {
     val flow = MutableSharedFlow<Int>()
 
     val job = launch {
-      flow.emitWaitUntilCollector(100)
+      flow.emitWaitUntilSubscription(100)
 
       println("launch emitWaitUntilCollector")
 
-      flow.emitWaitUntilCollector(1200)
+      flow.emitWaitUntilSubscription(1200)
     }
 
 
@@ -30,7 +30,7 @@ class SharedFlowTest {
   }
 }
 
-suspend fun <T> MutableSharedFlow<T>.emitWaitUntilCollector(
+suspend fun <T> MutableSharedFlow<T>.emitWaitUntilSubscription(
   value: T,
   limitRefCount: Int = 1
 ) {
