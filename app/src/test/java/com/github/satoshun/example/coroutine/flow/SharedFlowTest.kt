@@ -30,11 +30,14 @@ class SharedFlowTest {
     }
 }
 
-suspend fun <T> MutableSharedFlow<T>.emitWaitUntilCollector(value: T) {
+suspend fun <T> MutableSharedFlow<T>.emitWaitUntilCollector(
+    value: T,
+    limitRefCount: Int = 1
+) {
     println("start coroutineScope")
 
     subscriptionCount
-        .filter { it > 0 }
+        .filter { it >= limitRefCount }
         .onEach { emit(value) }
         .first()
 
