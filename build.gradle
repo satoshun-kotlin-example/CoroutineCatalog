@@ -5,7 +5,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:4.1.0'
+    classpath 'com.android.tools.build:gradle:4.1.1'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
 }
@@ -14,6 +14,19 @@ allprojects {
   repositories {
     google()
     jcenter()
+  }
+
+  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+      jvmTarget = JavaVersion.VERSION_1_8
+
+      freeCompilerArgs = [
+          "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+          "-Xopt-in=kotlinx.coroutines.FlowPreview",
+          "-Xopt-in=kotlin.ExperimentalStdlibApi",
+          "-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi",
+      ]
+    }
   }
 }
 
