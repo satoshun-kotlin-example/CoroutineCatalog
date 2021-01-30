@@ -1,6 +1,6 @@
 package com.github.satoshun.example.coroutine.rx
 
-import io.reactivex.Single
+import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import org.junit.Test
 
@@ -19,8 +19,8 @@ class MigrationTest {
 }
 
 private class TestRepository {
-  fun getUser(): Single<User> =
-    Single.just(User())
+  fun getUser(): Flowable<User> = 
+    Flowable.just(User())
 }
 
 class User
