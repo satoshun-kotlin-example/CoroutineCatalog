@@ -24,6 +24,20 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
+    val job1 = lifecycleScope.launchWhenStarted {
+      val result = cancelTest()
+      println("resultresult:job1:$result")
+    }
+    val job2 = lifecycleScope.launchWhenStarted {
+      val result = cancelTest2()
+      println("resultresult:job2:$result")
+    }
+    lifecycleScope.launchWhenStarted {
+      delay(4000)
+      job1.cancel()
+      job2.cancel()
+    }
+    return
 
 //    viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get()
 //
